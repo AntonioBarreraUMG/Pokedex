@@ -34,7 +34,6 @@ public class VentanaPokedex extends javax.swing.JFrame {
     private ResultSet resultadoConsulta;
     private Hashtable hash = new Hashtable();
     private String banderaFiltro = "";
-    private String p = "PROBANDO CAMBIO DE RAMA";
     
     @Override
     public void paint(Graphics g){
@@ -481,17 +480,14 @@ public class VentanaPokedex extends javax.swing.JFrame {
     }
     
     private void ejecutarPagineo(int contador) {
-//        String pokemon = (String) hash.get(contador);
-        int pokemon = (int) hash.get(contador);
-//        if (pokemon.charAt(0) == '|') {
-//            resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE id = " + (pokemon.replace("|", "")));
-//        } else {
-//            resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE id = " + (Integer.parseInt(pokemon)));
-//        }
-        resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE id = " + pokemon);
+        String pokemon = String.valueOf(hash.get(contador));
+        if (pokemon.charAt(0) == '|') {
+            resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE id = " + (pokemon.replace("|", "")));
+        } else {
+            resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE id = " + (Integer.parseInt(pokemon)));
+        }
         llenarLabeles(resultadoConsulta);
-//        dibujaElPokemonQueEstaEnLaPosicion(Integer.parseInt(pokemon)-1);
-        dibujaElPokemonQueEstaEnLaPosicion(pokemon-1);
+        dibujaElPokemonQueEstaEnLaPosicion(Integer.parseInt(pokemon.replace("|", ""))-1);
     }
     
     private void izqActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_izqActionPerformed
@@ -545,11 +541,11 @@ public class VentanaPokedex extends javax.swing.JFrame {
         try {
             resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta(tabla, consulta);
             while(resultadoConsulta.next()) {
-//                if (cont != resultadoConsulta.getInt(columna) && "TODOS".equals(banderaFiltro)) {
-//                    hash.put(cont, "|" + String.valueOf(resultadoConsulta.getInt(columna)));
-//                } else {
+                if (cont+1 != resultadoConsulta.getInt(columna) && "TODOS".equals(banderaFiltro)) {
+                    hash.put(cont, "|" + cont);
+                } else {
                     hash.put(cont, resultadoConsulta.getInt(columna));
-//                }
+                }
                 cont++;
             }
             limit = cont - 1;
@@ -560,6 +556,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
     }
     
     private void filtrarTodos() {
+        banderaFiltro = "TODOS";
         int columna = 1;
         String tabla = "pokemon ";
         String consulta = "";
@@ -567,10 +564,10 @@ public class VentanaPokedex extends javax.swing.JFrame {
         btnAgregarFavoritos.setEnabled(false);
         btnEliminarFavoritos.setEnabled(false);
         resultadoVacio();
-        banderaFiltro = "TODOS";
     }
     
     private void filtrarFavoritos() {
+        banderaFiltro = "FAVORITOS";
         int columna = 3;
         String tabla = "favoritos ";
         String consulta = "WHERE usuario = '" + USER + "' order by pokemon_id";
@@ -578,10 +575,10 @@ public class VentanaPokedex extends javax.swing.JFrame {
         btnAgregarFavoritos.setEnabled(false);
         btnEliminarFavoritos.setEnabled(true);
         resultadoVacio();
-        banderaFiltro = "FAVORITOS";
     }
     
     private void filtrarNoFavoritos() {
+        banderaFiltro = "NOFAVORITOS";
         String excluidos = "id != ";
         String tablaFavoritos = "favoritos ";
         String tablaPokemon = "pokemon ";
@@ -600,7 +597,6 @@ public class VentanaPokedex extends javax.swing.JFrame {
         btnAgregarFavoritos.setEnabled(true);
         btnEliminarFavoritos.setEnabled(false);
         resultadoVacio();
-        banderaFiltro = "NOFAVORITOS";
     }
     
     private void rbtnFavoritosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtnFavoritosActionPerformed
