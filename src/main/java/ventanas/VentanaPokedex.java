@@ -16,8 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Objects;
 import javax.imageio.ImageIO;
 
 /**
@@ -125,6 +124,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         lblExperiencia = new javax.swing.JLabel();
         btnLogout = new javax.swing.JButton();
+        btnFiltros = new javax.swing.JButton();
 
         jButton3.setText("jButton3");
 
@@ -274,6 +274,13 @@ public class VentanaPokedex extends javax.swing.JFrame {
             }
         });
 
+        btnFiltros.setText("Filtros");
+        btnFiltros.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFiltrosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -334,12 +341,14 @@ public class VentanaPokedex extends javax.swing.JFrame {
                         .addGap(138, 138, 138)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(nombrePokemon, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(imagenPokemon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(btnEliminarFavoritos)
-                                    .addComponent(btnAgregarFavoritos, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(btnFiltros)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(imagenPokemon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(btnEliminarFavoritos)
+                                        .addComponent(btnAgregarFavoritos, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
                 .addContainerGap(23, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(37, 37, 37)
@@ -356,7 +365,8 @@ public class VentanaPokedex extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnLogout))
+                    .addComponent(btnLogout)
+                    .addComponent(btnFiltros))
                 .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtBuscarNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -443,7 +453,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
             lblExperiencia.setText(rs.getString(18));
             lblFelicidad.setText(rs.getString(19));
         } catch (SQLException ex) {
-            Logger.getLogger(VentanaPokedex.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace(System.out);
         }
     }
     
@@ -470,7 +480,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
                 resultadoNoEncontrado(relleno);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(VentanaPokedex.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace(System.out);
         }   
     }
     
@@ -481,17 +491,19 @@ public class VentanaPokedex extends javax.swing.JFrame {
     
     private void ejecutarPagineo(int contador) {
         String pokemon = String.valueOf(hash.get(contador));
-        if (pokemon.charAt(0) == '|') {
-            resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE id = " + (pokemon.replace("|", "")));
-        } else {
-            resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE id = " + (Integer.parseInt(pokemon)));
+        if (!Objects.equals(pokemon, "null")) {
+            if (pokemon.charAt(0) == '|') {
+                resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE id = " + (pokemon.replace("|", "")));
+            } else {
+                resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE id = " + (Integer.parseInt(pokemon)));
+            }
+            llenarLabeles(resultadoConsulta);
+            dibujaElPokemonQueEstaEnLaPosicion(Integer.parseInt(pokemon.replace("|", ""))-1);
         }
-        llenarLabeles(resultadoConsulta);
-        dibujaElPokemonQueEstaEnLaPosicion(Integer.parseInt(pokemon.replace("|", ""))-1);
     }
     
     private void izqActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_izqActionPerformed
-        contador --;
+        contador--;
         if(contador < 0){
             contador = 0;
         }
@@ -507,7 +519,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
     }//GEN-LAST:event_derActionPerformed
 
     private void btnAgregarFavoritosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarFavoritosActionPerformed
-        boolean prueba = !(lblId.getText().equals(""));
+        boolean prueba = !(lblId.getText().equals(relleno));
         if(prueba) {
             AccesoDatosJDBC.ejecutarInsertFavoritos(USER, Integer.parseInt(lblId.getText()));
             filtrarNoFavoritos();
@@ -516,7 +528,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAgregarFavoritosActionPerformed
 
     private void btnEliminarFavoritosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarFavoritosActionPerformed
-        boolean prueba = !(lblId.getText().equals(""));
+        boolean prueba = !(lblId.getText().equals(relleno));
         if(prueba) {
             AccesoDatosJDBC.ejecutarDeleteFavoritos(Integer.parseInt(lblId.getText()));
             filtrarFavoritos();
@@ -529,10 +541,12 @@ public class VentanaPokedex extends javax.swing.JFrame {
             String nombre = txtBuscarNombre.getText().substring(0, 1).toUpperCase() + txtBuscarNombre.getText().substring(1).toLowerCase();
             resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE name = '" + nombre + "'");
             llenarLabeles(resultadoConsulta);
-            contador = Integer.valueOf(resultadoConsulta.getString(1));
-            dibujaElPokemonQueEstaEnLaPosicion(contador + 1);
+            if(!Objects.equals(lblId.getText(), relleno)) {
+                contador = Integer.valueOf(resultadoConsulta.getString(1));
+                dibujaElPokemonQueEstaEnLaPosicion(contador-1);
+            }
         } catch (SQLException ex) {
-            Logger.getLogger(VentanaPokedex.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace(System.out);
         }
     }//GEN-LAST:event_btnBuscarNombreActionPerformed
     
@@ -552,7 +566,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
             limit = cont - 1;
             contador = -1;
         } catch (SQLException ex) {
-            Logger.getLogger(VentanaPokedex.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace(System.out);
         }
     }
     
@@ -564,6 +578,8 @@ public class VentanaPokedex extends javax.swing.JFrame {
         filtrarResultados(columna, tabla, consulta);
         btnAgregarFavoritos.setEnabled(false);
         btnEliminarFavoritos.setEnabled(false);
+        btnBuscarNombre.setEnabled(true);
+        txtBuscarNombre.setEnabled(true);
         resultadoVacio();
     }
     
@@ -575,6 +591,8 @@ public class VentanaPokedex extends javax.swing.JFrame {
         filtrarResultados(columna, tabla, consulta);
         btnAgregarFavoritos.setEnabled(false);
         btnEliminarFavoritos.setEnabled(true);
+        btnBuscarNombre.setEnabled(false);
+        txtBuscarNombre.setEnabled(false);
         resultadoVacio();
     }
     
@@ -597,6 +615,8 @@ public class VentanaPokedex extends javax.swing.JFrame {
         }
         btnAgregarFavoritos.setEnabled(true);
         btnEliminarFavoritos.setEnabled(false);
+        btnBuscarNombre.setEnabled(false);
+        txtBuscarNombre.setEnabled(false);
         resultadoVacio();
     }
     
@@ -613,11 +633,16 @@ public class VentanaPokedex extends javax.swing.JFrame {
     }//GEN-LAST:event_rbtnTodosActionPerformed
 
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
-        Login m = new Login();
-        m.setVisible(true);
-        m.setBounds(100,100,100,100);
-        this.setVisible(false);
+        Login ventanaLogin = new Login();
+        ventanaLogin.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnLogoutActionPerformed
+
+    private void btnFiltrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltrosActionPerformed
+        Filtros ventanaFiltros = new Filtros();
+        ventanaFiltros.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnFiltrosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -658,6 +683,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
     private javax.swing.JButton btnAgregarFavoritos;
     private javax.swing.JButton btnBuscarNombre;
     private javax.swing.JButton btnEliminarFavoritos;
+    private javax.swing.JButton btnFiltros;
     private javax.swing.JButton btnLogout;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton der;
