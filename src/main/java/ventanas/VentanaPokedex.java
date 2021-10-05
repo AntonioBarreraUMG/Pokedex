@@ -556,6 +556,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
     }
     
     private void filtrarTodos() {
+        banderaFiltro = "TODOS";
         int columna = 1;
         String tabla = "pokemon ";
         String consulta = "";
@@ -563,10 +564,10 @@ public class VentanaPokedex extends javax.swing.JFrame {
         btnAgregarFavoritos.setEnabled(false);
         btnEliminarFavoritos.setEnabled(false);
         resultadoVacio();
-        banderaFiltro = "TODOS";
     }
     
     private void filtrarFavoritos() {
+        banderaFiltro = "FAVORITOS";
         int columna = 3;
         String tabla = "favoritos ";
         String consulta = "WHERE usuario = '" + USER + "' order by pokemon_id";
@@ -574,10 +575,10 @@ public class VentanaPokedex extends javax.swing.JFrame {
         btnAgregarFavoritos.setEnabled(false);
         btnEliminarFavoritos.setEnabled(true);
         resultadoVacio();
-        banderaFiltro = "FAVORITOS";
     }
     
     private void filtrarNoFavoritos() {
+        banderaFiltro = "NOFAVORITOS";
         String excluidos = "id != ";
         String tablaFavoritos = "favoritos ";
         String tablaPokemon = "pokemon ";
@@ -596,7 +597,6 @@ public class VentanaPokedex extends javax.swing.JFrame {
         btnAgregarFavoritos.setEnabled(true);
         btnEliminarFavoritos.setEnabled(false);
         resultadoVacio();
-        banderaFiltro = "NOFAVORITOS";
     }
     
     private void rbtnFavoritosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtnFavoritosActionPerformed
