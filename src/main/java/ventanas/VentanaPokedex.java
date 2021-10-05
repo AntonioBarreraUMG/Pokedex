@@ -480,17 +480,14 @@ public class VentanaPokedex extends javax.swing.JFrame {
     }
     
     private void ejecutarPagineo(int contador) {
-//        String pokemon = (String) hash.get(contador);
-        int pokemon = (int) hash.get(contador);
-//        if (pokemon.charAt(0) == '|') {
-//            resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE id = " + (pokemon.replace("|", "")));
-//        } else {
-//            resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE id = " + (Integer.parseInt(pokemon)));
-//        }
-        resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE id = " + pokemon);
+        String pokemon = String.valueOf(hash.get(contador));
+        if (pokemon.charAt(0) == '|') {
+            resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE id = " + (pokemon.replace("|", "")));
+        } else {
+            resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE id = " + (Integer.parseInt(pokemon)));
+        }
         llenarLabeles(resultadoConsulta);
-//        dibujaElPokemonQueEstaEnLaPosicion(Integer.parseInt(pokemon)-1);
-        dibujaElPokemonQueEstaEnLaPosicion(pokemon-1);
+        dibujaElPokemonQueEstaEnLaPosicion(Integer.parseInt(pokemon.replace("|", ""))-1);
     }
     
     private void izqActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_izqActionPerformed
@@ -544,11 +541,11 @@ public class VentanaPokedex extends javax.swing.JFrame {
         try {
             resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta(tabla, consulta);
             while(resultadoConsulta.next()) {
-//                if (cont != resultadoConsulta.getInt(columna) && "TODOS".equals(banderaFiltro)) {
-//                    hash.put(cont, "|" + String.valueOf(resultadoConsulta.getInt(columna)));
-//                } else {
+                if (cont+1 != resultadoConsulta.getInt(columna) && "TODOS".equals(banderaFiltro)) {
+                    hash.put(cont, "|" + cont);
+                } else {
                     hash.put(cont, resultadoConsulta.getInt(columna));
-//                }
+                }
                 cont++;
             }
             limit = cont - 1;
