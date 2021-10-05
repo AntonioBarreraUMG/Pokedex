@@ -34,6 +34,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
     private ResultSet resultadoConsulta;
     private Hashtable hash = new Hashtable();
     private String banderaFiltro = "";
+    private String p = "PROBANDO CAMBIO DE RAMA";
     
     @Override
     public void paint(Graphics g){
@@ -420,7 +421,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblColor))
                 .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(izq)
                     .addComponent(der))
                 .addGap(25, 25, 25))
