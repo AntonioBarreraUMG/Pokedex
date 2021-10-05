@@ -526,10 +526,11 @@ public class VentanaPokedex extends javax.swing.JFrame {
 
     private void btnBuscarNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarNombreActionPerformed
         try {
-            resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE name = '" + txtBuscarNombre.getText() + "'");
+            String nombre = txtBuscarNombre.getText().substring(0, 1).toUpperCase() + txtBuscarNombre.getText().substring(1).toLowerCase();
+            resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE name = '" + nombre + "'");
             llenarLabeles(resultadoConsulta);
-            contador = Integer.valueOf(resultadoConsulta.getString(1)) - 1;
-            dibujaElPokemonQueEstaEnLaPosicion(contador);
+            contador = Integer.valueOf(resultadoConsulta.getString(1));
+            dibujaElPokemonQueEstaEnLaPosicion(contador + 1);
         } catch (SQLException ex) {
             Logger.getLogger(VentanaPokedex.class.getName()).log(Level.SEVERE, null, ex);
         }
