@@ -26,7 +26,7 @@ public class AccesoDatosJDBC {
         ResultSet rs = null;
         Statement st = null;
         try {
-            cn = ClsConexion.getConnetion();
+            cn = ClsConexion.getConnection();
             st = cn.createStatement();
             rs = st.executeQuery(query);
         } catch (SQLException ex) {
@@ -39,7 +39,7 @@ public class AccesoDatosJDBC {
         Connection cn = null;
         PreparedStatement stmt = null;
         try {
-            cn = ClsConexion.getConnetion();
+            cn = ClsConexion.getConnection();
             stmt = cn.prepareStatement(SQL_INSERT);
             stmt.setString(1, usuario);
             stmt.setInt(2, id);
@@ -53,7 +53,7 @@ public class AccesoDatosJDBC {
         Connection cn = null;
         PreparedStatement stmt = null;
         try {
-            cn = ClsConexion.getConnetion();
+            cn = ClsConexion.getConnection();
             stmt = cn.prepareStatement(SQL_DELETE);
             stmt.setInt(1, id);
             stmt.execute();

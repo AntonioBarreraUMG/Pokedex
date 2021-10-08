@@ -28,7 +28,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
     private final BufferedImage buffer1;
     private int limit = 649;
     private int contador = -1;
-    private String USER = "linda";
+    private String USER = "";
     private Image imagen1;
     private ResultSet resultadoConsulta;
     private Hashtable hash = new Hashtable();
@@ -39,6 +39,10 @@ public class VentanaPokedex extends javax.swing.JFrame {
         super.paintComponents(g);
         Graphics2D  g2 = (Graphics2D) imagenPokemon.getGraphics();
         g2.drawImage(buffer1,0,0,imagenPokemon.getWidth(), imagenPokemon.getHeight(),null);
+    }
+    
+    public void setUSER(String USER) {
+        this.USER = USER;
     }
     
     /**
@@ -125,11 +129,12 @@ public class VentanaPokedex extends javax.swing.JFrame {
         lblExperiencia = new javax.swing.JLabel();
         btnLogout = new javax.swing.JButton();
         btnFiltros = new javax.swing.JButton();
+        lblIdReal = new javax.swing.JLabel();
 
         jButton3.setText("jButton3");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setBackground(new java.awt.Color(51, 51, 51));
+        setBackground(new java.awt.Color(255, 0, 0));
 
         imagenPokemon.setBorder(new javax.swing.border.MatteBorder(null));
 
@@ -281,6 +286,8 @@ public class VentanaPokedex extends javax.swing.JFrame {
             }
         });
 
+        lblIdReal.setText("jLabel13");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -301,13 +308,13 @@ public class VentanaPokedex extends javax.swing.JFrame {
                         .addComponent(izq)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(lblColor, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                .addComponent(lblEspecie, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(lblPeso, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblAltura, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblColor, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                            .addComponent(lblEspecie, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblPeso, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                            .addComponent(lblAltura, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                            .addComponent(lblIdReal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(lblId, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -401,7 +408,8 @@ public class VentanaPokedex extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel8)
                             .addComponent(lblHabitat)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblIdReal))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel9)
@@ -441,7 +449,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
     
     private void resultadoEncontrado(ResultSet rs) {
         try {
-            lblId.setText(rs.getString(1));
+            lblIdReal.setText(rs.getString(1));
             nombrePokemon.setText(rs.getString(2));
             lblGeneracion.setText(rs.getString(5));
             lblAltura.setText(rs.getString(10));
@@ -458,7 +466,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
     }
     
     private void resultadoNoEncontrado(String relleno) {
-        lblId.setText(relleno);
+        lblIdReal.setText(relleno);
         nombrePokemon.setText(relleno);
         lblGeneracion.setText(relleno);
         lblAltura.setText(relleno);
@@ -519,18 +527,18 @@ public class VentanaPokedex extends javax.swing.JFrame {
     }//GEN-LAST:event_derActionPerformed
 
     private void btnAgregarFavoritosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarFavoritosActionPerformed
-        boolean prueba = !(lblId.getText().equals(relleno));
+        boolean prueba = !(lblIdReal.getText().equals(relleno));
         if(prueba) {
-            AccesoDatosJDBC.ejecutarInsertFavoritos(USER, Integer.parseInt(lblId.getText()));
+            AccesoDatosJDBC.ejecutarInsertFavoritos(USER, Integer.parseInt(lblIdReal.getText()));
             filtrarNoFavoritos();
             resultadoVacio();
         }
     }//GEN-LAST:event_btnAgregarFavoritosActionPerformed
 
     private void btnEliminarFavoritosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarFavoritosActionPerformed
-        boolean prueba = !(lblId.getText().equals(relleno));
+        boolean prueba = !(lblIdReal.getText().equals(relleno));
         if(prueba) {
-            AccesoDatosJDBC.ejecutarDeleteFavoritos(Integer.parseInt(lblId.getText()));
+            AccesoDatosJDBC.ejecutarDeleteFavoritos(Integer.parseInt(lblIdReal.getText()));
             filtrarFavoritos();
             resultadoVacio();
         }
@@ -541,9 +549,9 @@ public class VentanaPokedex extends javax.swing.JFrame {
             String nombre = txtBuscarNombre.getText().substring(0, 1).toUpperCase() + txtBuscarNombre.getText().substring(1).toLowerCase();
             resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE name = '" + nombre + "'");
             llenarLabeles(resultadoConsulta);
-            if(!Objects.equals(lblId.getText(), relleno)) {
-                contador = Integer.valueOf(resultadoConsulta.getString(1));
-                dibujaElPokemonQueEstaEnLaPosicion(contador-1);
+            if(!Objects.equals(lblIdReal.getText(), relleno)) {
+                contador = Integer.valueOf(resultadoConsulta.getString(1)) - 1;
+                dibujaElPokemonQueEstaEnLaPosicion(contador);
             }
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
@@ -557,7 +565,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
             resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta(tabla, consulta);
             while(resultadoConsulta.next()) {
                 if (cont+1 != resultadoConsulta.getInt(columna) && "TODOS".equals(banderaFiltro)) {
-                    hash.put(cont, "|" + cont);
+                    hash.put(cont, "|" + (cont+1));
                 } else {
                     hash.put(cont, resultadoConsulta.getInt(columna));
                 }
@@ -598,21 +606,20 @@ public class VentanaPokedex extends javax.swing.JFrame {
     
     private void filtrarNoFavoritos() {
         banderaFiltro = "NOFAVORITOS";
-        String excluidos = "id != ";
+        String excluidos = "";
         String tablaFavoritos = "favoritos ";
         String tablaPokemon = "pokemon ";
         String consultaExcluidos = "WHERE usuario = '" + USER + "' order by pokemon_id";
         
         filtrarResultados(3, tablaFavoritos, consultaExcluidos);
         if (hash.size() > 0) {
+            excluidos = "WHERE id != ";
             excluidos += hash.get(0);
             for (int i = 1; i <= limit; i++) {
                 excluidos += " AND id != " + hash.get(i);
             }
-            filtrarResultados(1, tablaPokemon, "WHERE " + excluidos);
-        } else {
-            filtrarTodos();
-        }
+        } 
+        filtrarResultados(1, tablaPokemon, excluidos);
         btnAgregarFavoritos.setEnabled(true);
         btnEliminarFavoritos.setEnabled(false);
         btnBuscarNombre.setEnabled(false);
@@ -647,6 +654,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -678,6 +686,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
             }
         });
     }
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregarFavoritos;
@@ -711,6 +720,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
     private javax.swing.JLabel lblGeneracion;
     private javax.swing.JLabel lblHabitat;
     private javax.swing.JLabel lblId;
+    private javax.swing.JLabel lblIdReal;
     private javax.swing.JLabel lblPeso;
     private javax.swing.JLabel nombrePokemon;
     private javax.swing.JRadioButton rbtnFavoritos;

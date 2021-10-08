@@ -16,7 +16,7 @@ public class ClsConexion {
     private static final String JDBC_USER = "root";
     private static final String JDBC_PWD = "root";
     
-    public static Connection getConnetion() throws SQLException {
+    public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PWD);
     }
     

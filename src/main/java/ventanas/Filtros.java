@@ -13,6 +13,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Objects;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -42,6 +43,9 @@ public class Filtros extends javax.swing.JFrame {
         modelo.addColumn("name");
         modelo.addColumn("generation_id");
         modelo.addColumn("height");
+        modelo.addColumn("weight");
+        modelo.addColumn("species");
+        modelo.addColumn("capture_rate");
         this.TablaMostrar.setModel(modelo);
     }
 
@@ -69,17 +73,18 @@ public class Filtros extends javax.swing.JFrame {
         txtExperienciaBase = new javax.swing.JTextField();
         btnFiltroCaptura = new javax.swing.JButton();
         btnFiltroExperiencia = new javax.swing.JButton();
+        btnRegresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        cboFiltroColores.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "red", "green", "white", "brown", "yellow", "purple", "blue", "pink", "gray", "black" }));
+        cboFiltroColores.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar opción", "red", "green", "white", "brown", "yellow", "purple", "blue", "pink", "gray", "black" }));
         cboFiltroColores.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboFiltroColoresActionPerformed(evt);
             }
         });
 
-        cboFiltroHabitat.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "grassland", "mountain", "forest", "rough terrain", "cave", "urban", "sea", "rare" }));
+        cboFiltroHabitat.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar opción", "grassland", "mountain", "forest", "rough terrain", "cave", "urban", "sea", "rare" }));
         cboFiltroHabitat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboFiltroHabitatActionPerformed(evt);
@@ -121,12 +126,6 @@ public class Filtros extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Rockwell", 1, 36)); // NOI18N
         jLabel5.setText("Filtros pokedex");
 
-        txtRateCaptura.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtRateCapturaActionPerformed(evt);
-            }
-        });
-
         btnFiltroCaptura.setText("->");
         btnFiltroCaptura.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -138,6 +137,13 @@ public class Filtros extends javax.swing.JFrame {
         btnFiltroExperiencia.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnFiltroExperienciaActionPerformed(evt);
+            }
+        });
+
+        btnRegresar.setText("Regresar");
+        btnRegresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegresarActionPerformed(evt);
             }
         });
 
@@ -154,7 +160,7 @@ public class Filtros extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(21, 21, 21)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jLabel1)
@@ -171,9 +177,10 @@ public class Filtros extends javax.swing.JFrame {
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(btnFiltroCaptura))))
                                     .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btnRegresar)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(51, 51, 51)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel3)
                                     .addGroup(layout.createSequentialGroup()
@@ -193,12 +200,14 @@ public class Filtros extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(58, 58, 58)
+                        .addGap(17, 17, 17)
+                        .addComponent(btnRegresar)
+                        .addGap(18, 18, 18)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cboFiltroColores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(14, Short.MAX_VALUE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -230,30 +239,39 @@ public class Filtros extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void ejecutarConsulta(String consul){    
+    private void llenarTabla(String consul){    
         String tabla = "pokemon ";
         
         try {
             resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta(tabla, consul);
-            
-                            String []info=new String[4];
+            String []info=new String[7];
             while (resultadoConsulta.next()){
                 //contador=Integer.valueOf(resultadoConsulta.getString(1))-1;
                 info[0]=resultadoConsulta.getString(1);
                 info[1]=resultadoConsulta.getString(2);
                 info[2]=resultadoConsulta.getString(5);
                 info[3]=resultadoConsulta.getString(10);
+                info[4]=resultadoConsulta.getString(11);
+                info[5]=resultadoConsulta.getString(12);
+                info[6]=resultadoConsulta.getString(17);
                 modelo.addRow(info);
             } /*else {
                 nombrePokemon.setText("Este chucho no esta en el pokedex");
             }*/
-              
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
             System.out.println("Clavo con sql");
         }
     }
     
+    private void filtrarDatos(String filtro, String columna) {
+        if (!Objects.equals(filtro, "Seleccionar opción")) {
+            while (modelo.getRowCount() > 0) {
+                modelo.removeRow(0);
+            }
+            llenarTabla("where " + columna + " = '" + filtro + "'");
+        }
+    }
     
     private void btnCorreoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCorreoActionPerformed
         // TODO add your handling code here:
@@ -266,55 +284,44 @@ public class Filtros extends javax.swing.JFrame {
     private void cboFiltroColoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboFiltroColoresActionPerformed
         // TODO add your handling code here:
       //para eliminar todas las filas de la tabla
-      while (modelo.getRowCount() > 0)
-            {
-                modelo.removeRow(0);
-            }
-        String ColorElegido=cboFiltroColores.getSelectedItem().toString();
-        ejecutarConsulta("where color = '"+ColorElegido+"'");
-        
-        
+        String filtro = cboFiltroColores.getSelectedItem().toString();
+        filtrarDatos(filtro, "color");
+        cboFiltroColores.setSelectedIndex(0);
     }//GEN-LAST:event_cboFiltroColoresActionPerformed
 
     private void btnFiltroCapturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltroCapturaActionPerformed
         // TODO add your handling code here:
-        while (modelo.getRowCount() > 0)
-            {
-                modelo.removeRow(0);
-            }
-         String CapturaElegida=txtRateCaptura.getText().toString();
-        ejecutarConsulta("where capture_rate = '"+CapturaElegida+"'");
-        
+        String filtro = txtRateCaptura.getText();
+        filtrarDatos(filtro, "capture_rate");
+        txtRateCaptura.setText("");
     }//GEN-LAST:event_btnFiltroCapturaActionPerformed
-
-    private void txtRateCapturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtRateCapturaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtRateCapturaActionPerformed
 
     private void cboFiltroHabitatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboFiltroHabitatActionPerformed
         // TODO add your handling code here:
-        while (modelo.getRowCount() > 0)
-            {
-                modelo.removeRow(0);
-            }
-         String HabitatElegida=cboFiltroHabitat.getSelectedItem().toString();
-        ejecutarConsulta("where habitat = '"+HabitatElegida+"'");
-       
+        String filtro = cboFiltroHabitat.getSelectedItem().toString();
+        filtrarDatos(filtro, "habitat");
+        cboFiltroHabitat.setSelectedIndex(0);
     }//GEN-LAST:event_cboFiltroHabitatActionPerformed
 
+    
     private void btnFiltroExperienciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltroExperienciaActionPerformed
         // TODO add your handling code here:
-         while (modelo.getRowCount() > 0)
-            {
-                modelo.removeRow(0);
-            }
-         String ExperienciaElegida=txtExperienciaBase.getText().toString();
-        ejecutarConsulta("where base_experience = '"+ExperienciaElegida+"'");
+        String filtro = txtExperienciaBase.getText();
+        filtrarDatos(filtro, "base_experience");
+        txtExperienciaBase.setText("");
     }//GEN-LAST:event_btnFiltroExperienciaActionPerformed
+
+    private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
+        // TODO add your handling code here:
+        VentanaPokedex ventanaPoke = new VentanaPokedex();
+        ventanaPoke.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnRegresarActionPerformed
 
     /**
      * @param args the command line arguments
      */
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -341,18 +348,23 @@ public class Filtros extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Filtros().setVisible(true);
             }
         });
+
     }
+
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable TablaMostrar;
     private javax.swing.JButton btnCorreo;
     private javax.swing.JButton btnFiltroCaptura;
     private javax.swing.JButton btnFiltroExperiencia;
+    private javax.swing.JButton btnRegresar;
     private javax.swing.JComboBox<String> cboFiltroColores;
     private javax.swing.JComboBox<String> cboFiltroHabitat;
     private javax.swing.JButton jButton1;

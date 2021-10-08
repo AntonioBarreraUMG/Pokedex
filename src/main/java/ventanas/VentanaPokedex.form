@@ -13,7 +13,7 @@
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-      <Color blue="33" green="33" red="33" type="rgb"/>
+      <Color blue="0" green="0" red="ff" type="rgb"/>
     </Property>
   </Properties>
   <SyntheticProperties>
@@ -54,14 +54,13 @@
               </Group>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="lblColor" alignment="0" pref="100" max="32767" attributes="0"/>
-                              <Component id="lblEspecie" alignment="0" max="32767" attributes="0"/>
-                          </Group>
-                          <Component id="lblPeso" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
-                          <Component id="lblAltura" min="-2" pref="100" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="lblColor" alignment="0" pref="100" max="32767" attributes="0"/>
+                          <Component id="lblEspecie" alignment="0" max="32767" attributes="0"/>
+                          <Component id="lblPeso" alignment="0" pref="100" max="32767" attributes="0"/>
+                          <Component id="lblAltura" pref="100" max="32767" attributes="0"/>
+                          <Component id="lblIdReal" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
@@ -183,6 +182,7 @@
                           <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="lblHabitat" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel3" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
+                          <Component id="lblIdReal" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -499,6 +499,11 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnFiltrosActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblIdReal">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="jLabel13"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>
