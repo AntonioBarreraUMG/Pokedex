@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ventanas;
+package Ventanas;
 
-import Modelo.Usuario;
+import Modelo.MdUsuario;
 import Modelo.UsuarioJDBC;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -15,7 +15,8 @@ import javax.swing.JOptionPane;
  * @author jeant
  */
 public class Login extends javax.swing.JFrame {
-JFrame jFrame = new JFrame();
+    private final JFrame jFrame = new JFrame();
+    
     /**
      * Creates new form Register
      */
@@ -119,11 +120,10 @@ JFrame jFrame = new JFrame();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarActionPerformed
-        Usuario usu = new Usuario();//instancias
+        MdUsuario usu = new MdUsuario();
         UsuarioJDBC udb = new UsuarioJDBC();
-        
-        String usr= txtUsuarioI.getText();
-        String pwd=pwdContraI.getText();
+        String usr = txtUsuarioI.getText();
+        String pwd = pwdContraI.getText();
         usu.setUsername(usr);
         usu.setPassword(pwd);
 
@@ -132,53 +132,16 @@ JFrame jFrame = new JFrame();
             ventanaPoke.setVisible(true);
             ventanaPoke.setUSER(usr);
             this.dispose();
-        }else{
+        } else {
             JOptionPane.showMessageDialog(jFrame, "Revise su usuario o contraseña");
         }
     }//GEN-LAST:event_btnIngresarActionPerformed
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-        // TODO add your handling code here:
         Register ventanaRegister = new Register();
         ventanaRegister.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnRegistrarActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Login().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnIngresar;

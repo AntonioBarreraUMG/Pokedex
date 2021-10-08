@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ventanas;
+package Ventanas;
 
 
 import Modelo.AccesoDatosJDBC;
@@ -26,41 +26,150 @@ import javax.imageio.ImageIO;
 public class VentanaPokedex extends javax.swing.JFrame {
     private final String relleno = "- - - - - -";
     private final BufferedImage buffer1;
-    private int limit = 649;
+    private int limit;
     private int contador = -1;
     private String USER = "";
     private Image imagen1;
     private ResultSet resultadoConsulta;
-    private Hashtable hash = new Hashtable();
+    private Hashtable hash;
     private String banderaFiltro = "";
-    
-    @Override
-    public void paint(Graphics g){
-        super.paintComponents(g);
-        Graphics2D  g2 = (Graphics2D) imagenPokemon.getGraphics();
-        g2.drawImage(buffer1,0,0,imagenPokemon.getWidth(), imagenPokemon.getHeight(),null);
-    }
     
     public void setUSER(String USER) {
         this.USER = USER;
     }
     
-    /**
-     * Creates new form VentanaPokedex
-     */
-    public VentanaPokedex() {
-        initComponents();
+    private void filtrarResultados(int columna, String tabla, String consulta) {
+        hash.clear();
+        int cont = 0;
         try {
-            //imagen1 = ImageIO.read(getClass().getResource("/imagenes/black-white.png"));*/
-            imagen1 = ImageIO.read(new File("C:\\tmp2\\datos\\imagenes\\black-white.png"));
-        } catch (IOException ex) {
+            resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta(tabla, consulta);
+            while(resultadoConsulta.next()) {
+                if (cont+1 != resultadoConsulta.getInt(columna) && "TODOS".equals(banderaFiltro)) {
+                    hash.put(cont, "|" + (cont+1));
+                } else {
+                    hash.put(cont, resultadoConsulta.getInt(columna));
+                }
+                cont++;
+            }
+            limit = cont - 1;
+            contador = -1;
+        } catch (SQLException ex) {
             ex.printStackTrace(System.out);
         }
-        buffer1 = (BufferedImage) imagenPokemon.createImage(imagenPokemon.getWidth(), imagenPokemon.getHeight());
-        Graphics2D g2 = buffer1.createGraphics();
-        filtrarTodos(); 
     }
-     
+    
+    private void filtrarTodos() {
+        banderaFiltro = "TODOS";
+        int columna = 1;
+        String tabla = "pokemon ";
+        String consulta = "";
+        filtrarResultados(columna, tabla, consulta);
+        btnAgregarFavoritos.setEnabled(false);
+        btnEliminarFavoritos.setEnabled(false);
+        btnBuscarNombre.setEnabled(true);
+        txtBuscarNombre.setEnabled(true);
+        resultadoVacio();
+    }
+    
+    private void filtrarFavoritos() {
+        banderaFiltro = "FAVORITOS";
+        int columna = 3;
+        String tabla = "favoritos ";
+        String consulta = "WHERE usuario = '" + USER + "' order by pokemon_id";
+        filtrarResultados(columna, tabla, consulta);
+        btnAgregarFavoritos.setEnabled(false);
+        btnEliminarFavoritos.setEnabled(true);
+        btnBuscarNombre.setEnabled(false);
+        txtBuscarNombre.setEnabled(false);
+        resultadoVacio();
+    }
+    
+    private void filtrarNoFavoritos() {
+        banderaFiltro = "NOFAVORITOS";
+        String excluidos = "";
+        String tablaFavoritos = "favoritos ";
+        String tablaPokemon = "pokemon ";
+        String consultaExcluidos = "WHERE usuario = '" + USER + "' order by pokemon_id";
+        
+        filtrarResultados(3, tablaFavoritos, consultaExcluidos);
+        if (hash.size() > 0) {
+            excluidos = "WHERE id != ";
+            excluidos += hash.get(0);
+            for (int i = 1; i <= limit; i++) {
+                excluidos += " AND id != " + hash.get(i);
+            }
+        } 
+        filtrarResultados(1, tablaPokemon, excluidos);
+        btnAgregarFavoritos.setEnabled(true);
+        btnEliminarFavoritos.setEnabled(false);
+        btnBuscarNombre.setEnabled(false);
+        txtBuscarNombre.setEnabled(false);
+        resultadoVacio();
+    }
+    
+    private void resultadoEncontrado(ResultSet rs) {
+        try {
+            lblIdReal.setText(rs.getString(1));
+            nombrePokemon.setText(rs.getString(2));
+            lblGeneracion.setText(rs.getString(5));
+            lblAltura.setText(rs.getString(10));
+            lblPeso.setText(rs.getString(11));
+            lblEspecie.setText(rs.getString(12));
+            lblColor.setText(rs.getString(13));
+            lblHabitat.setText(rs.getString(15));
+            lblCaptura.setText(rs.getString(17));
+            lblExperiencia.setText(rs.getString(18));
+            lblFelicidad.setText(rs.getString(19));
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.out);
+        }
+    }
+    
+    private void resultadoNoEncontrado(String relleno) {
+        lblIdReal.setText(relleno);
+        nombrePokemon.setText(relleno);
+        lblGeneracion.setText(relleno);
+        lblAltura.setText(relleno);
+        lblPeso.setText(relleno);
+        lblEspecie.setText(relleno);
+        lblColor.setText(relleno);
+        lblHabitat.setText(relleno);
+        lblCaptura.setText(relleno);
+        lblExperiencia.setText(relleno);
+        lblFelicidad.setText(relleno);
+        dibujaElPokemonQueEstaEnLaPosicion(-1);
+    }
+    
+    private void llenarLabeles(ResultSet rs) {
+        try {
+            if(rs.next()) {
+                resultadoEncontrado(rs);
+            } else {
+                resultadoNoEncontrado(relleno);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.out);
+        }   
+    }
+    
+    private void resultadoVacio() {
+        dibujaElPokemonQueEstaEnLaPosicion(-1);
+        resultadoNoEncontrado(relleno);
+    }
+    
+    private void ejecutarPagineo(int contador) {
+        String pokemon = String.valueOf(hash.get(contador));
+        pokemon = pokemon.replace("|", "");
+        String tabla = "pokemon ";
+        String consulta = "WHERE id = " + pokemon;
+        
+        if (!Objects.equals(pokemon, "null")) {
+            resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta(tabla, consulta);
+            llenarLabeles(resultadoConsulta);
+            dibujaElPokemonQueEstaEnLaPosicion(Integer.parseInt(pokemon)-1);
+        }
+    }
+    
     public void dibujaElPokemonQueEstaEnLaPosicion(int posicion){
         int fila = posicion / 31;
         int columna = posicion % 31;
@@ -82,7 +191,31 @@ public class VentanaPokedex extends javax.swing.JFrame {
                 );
         repaint();
     }
-
+    
+    @Override
+    public void paint(Graphics g){
+        super.paintComponents(g);
+        Graphics2D  g2 = (Graphics2D) imagenPokemon.getGraphics();
+        g2.drawImage(buffer1,0,0,imagenPokemon.getWidth(), imagenPokemon.getHeight(),null);
+    }
+    
+    /**
+     * Creates new form VentanaPokedex
+     */
+    public VentanaPokedex() {
+        this.hash = new Hashtable();
+        initComponents();
+        try {
+            //imagen1 = ImageIO.read(getClass().getResource("/imagenes/black-white.png"));*/
+            imagen1 = ImageIO.read(new File("C:\\tmp2\\datos\\imagenes\\black-white.png"));
+        } catch (IOException ex) {
+            ex.printStackTrace(System.out);
+        }
+        buffer1 = (BufferedImage) imagenPokemon.createImage(imagenPokemon.getWidth(), imagenPokemon.getHeight());
+        Graphics2D g2 = buffer1.createGraphics();
+        filtrarTodos(); 
+    }
+     
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -446,70 +579,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
-    private void resultadoEncontrado(ResultSet rs) {
-        try {
-            lblIdReal.setText(rs.getString(1));
-            nombrePokemon.setText(rs.getString(2));
-            lblGeneracion.setText(rs.getString(5));
-            lblAltura.setText(rs.getString(10));
-            lblPeso.setText(rs.getString(11));
-            lblEspecie.setText(rs.getString(12));
-            lblColor.setText(rs.getString(13));
-            lblHabitat.setText(rs.getString(15));
-            lblCaptura.setText(rs.getString(17));
-            lblExperiencia.setText(rs.getString(18));
-            lblFelicidad.setText(rs.getString(19));
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
-        }
-    }
-    
-    private void resultadoNoEncontrado(String relleno) {
-        lblIdReal.setText(relleno);
-        nombrePokemon.setText(relleno);
-        lblGeneracion.setText(relleno);
-        lblAltura.setText(relleno);
-        lblPeso.setText(relleno);
-        lblEspecie.setText(relleno);
-        lblColor.setText(relleno);
-        lblHabitat.setText(relleno);
-        lblCaptura.setText(relleno);
-        lblExperiencia.setText(relleno);
-        lblFelicidad.setText(relleno);
-        dibujaElPokemonQueEstaEnLaPosicion(-1);
-    }
-    
-    private void llenarLabeles(ResultSet rs) {
-        try {
-            if(rs.next()) {
-                resultadoEncontrado(rs);
-            } else {
-                resultadoNoEncontrado(relleno);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
-        }   
-    }
-    
-    private void resultadoVacio() {
-        dibujaElPokemonQueEstaEnLaPosicion(-1);
-        resultadoNoEncontrado(relleno);
-    }
-    
-    private void ejecutarPagineo(int contador) {
-        String pokemon = String.valueOf(hash.get(contador));
-        if (!Objects.equals(pokemon, "null")) {
-            if (pokemon.charAt(0) == '|') {
-                resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE id = " + (pokemon.replace("|", "")));
-            } else {
-                resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta("pokemon ", "WHERE id = " + (Integer.parseInt(pokemon)));
-            }
-            llenarLabeles(resultadoConsulta);
-            dibujaElPokemonQueEstaEnLaPosicion(Integer.parseInt(pokemon.replace("|", ""))-1);
-        }
-    }
-    
+   
     private void izqActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_izqActionPerformed
         contador--;
         if(contador < 0){
@@ -557,76 +627,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
             ex.printStackTrace(System.out);
         }
     }//GEN-LAST:event_btnBuscarNombreActionPerformed
-    
-    private void filtrarResultados(int columna, String tabla, String consulta) {
-        hash.clear();
-        int cont = 0;
-        try {
-            resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta(tabla, consulta);
-            while(resultadoConsulta.next()) {
-                if (cont+1 != resultadoConsulta.getInt(columna) && "TODOS".equals(banderaFiltro)) {
-                    hash.put(cont, "|" + (cont+1));
-                } else {
-                    hash.put(cont, resultadoConsulta.getInt(columna));
-                }
-                cont++;
-            }
-            limit = cont - 1;
-            contador = -1;
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
-        }
-    }
-    
-    private void filtrarTodos() {
-        banderaFiltro = "TODOS";
-        int columna = 1;
-        String tabla = "pokemon ";
-        String consulta = "";
-        filtrarResultados(columna, tabla, consulta);
-        btnAgregarFavoritos.setEnabled(false);
-        btnEliminarFavoritos.setEnabled(false);
-        btnBuscarNombre.setEnabled(true);
-        txtBuscarNombre.setEnabled(true);
-        resultadoVacio();
-    }
-    
-    private void filtrarFavoritos() {
-        banderaFiltro = "FAVORITOS";
-        int columna = 3;
-        String tabla = "favoritos ";
-        String consulta = "WHERE usuario = '" + USER + "' order by pokemon_id";
-        filtrarResultados(columna, tabla, consulta);
-        btnAgregarFavoritos.setEnabled(false);
-        btnEliminarFavoritos.setEnabled(true);
-        btnBuscarNombre.setEnabled(false);
-        txtBuscarNombre.setEnabled(false);
-        resultadoVacio();
-    }
-    
-    private void filtrarNoFavoritos() {
-        banderaFiltro = "NOFAVORITOS";
-        String excluidos = "";
-        String tablaFavoritos = "favoritos ";
-        String tablaPokemon = "pokemon ";
-        String consultaExcluidos = "WHERE usuario = '" + USER + "' order by pokemon_id";
-        
-        filtrarResultados(3, tablaFavoritos, consultaExcluidos);
-        if (hash.size() > 0) {
-            excluidos = "WHERE id != ";
-            excluidos += hash.get(0);
-            for (int i = 1; i <= limit; i++) {
-                excluidos += " AND id != " + hash.get(i);
-            }
-        } 
-        filtrarResultados(1, tablaPokemon, excluidos);
-        btnAgregarFavoritos.setEnabled(true);
-        btnEliminarFavoritos.setEnabled(false);
-        btnBuscarNombre.setEnabled(false);
-        txtBuscarNombre.setEnabled(false);
-        resultadoVacio();
-    }
-    
+       
     private void rbtnFavoritosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtnFavoritosActionPerformed
         filtrarFavoritos();
     }//GEN-LAST:event_rbtnFavoritosActionPerformed
@@ -650,43 +651,6 @@ public class VentanaPokedex extends javax.swing.JFrame {
         ventanaFiltros.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnFiltrosActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(VentanaPokedex.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(VentanaPokedex.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(VentanaPokedex.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(VentanaPokedex.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new VentanaPokedex().setVisible(true);
-            }
-        });
-    }
-
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregarFavoritos;

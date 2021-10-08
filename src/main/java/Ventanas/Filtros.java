@@ -3,16 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ventanas;
+package Ventanas;
 
 import Modelo.AccesoDatosJDBC;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Objects;
 import javax.swing.table.DefaultTableModel;
 
@@ -25,19 +22,14 @@ public class Filtros extends javax.swing.JFrame {
     /**
      * Creates new form Filtros
      */
-    DefaultTableModel modelo;
-    
-    BufferedImage buffer1 = null;
-    Image imagen1 = null;
-    int contador = 0;
-    
-    Statement estado;
-    ResultSet resultadoConsulta;
-    Connection conexion;
+    private final DefaultTableModel modelo;
+    private final BufferedImage buffer1 = null;
+    private final Image imagen1 = null;
+    private int contador = 0;
+    private ResultSet resultadoConsulta;
     
     public Filtros() {
-        initComponents();
-                   
+        initComponents();     
         modelo = new DefaultTableModel();
         modelo.addColumn("id");
         modelo.addColumn("name");
@@ -66,8 +58,8 @@ public class Filtros extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         TablaMostrar = new javax.swing.JTable();
-        btnCorreo = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        btnEnviarCorreo = new javax.swing.JButton();
+        btnGenerarPDF = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         txtRateCaptura = new javax.swing.JTextField();
         txtExperienciaBase = new javax.swing.JTextField();
@@ -109,17 +101,17 @@ public class Filtros extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(TablaMostrar);
 
-        btnCorreo.setText("Enviar por correo");
-        btnCorreo.addActionListener(new java.awt.event.ActionListener() {
+        btnEnviarCorreo.setText("Enviar por correo");
+        btnEnviarCorreo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCorreoActionPerformed(evt);
+                btnEnviarCorreoActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Convertir PDF");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnGenerarPDF.setText("Convertir PDF");
+        btnGenerarPDF.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnGenerarPDFActionPerformed(evt);
             }
         });
 
@@ -189,9 +181,9 @@ public class Filtros extends javax.swing.JFrame {
                                         .addComponent(btnFiltroExperiencia))))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(226, 226, 226)
-                                .addComponent(btnCorreo)
+                                .addComponent(btnEnviarCorreo)
                                 .addGap(52, 52, 52)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(btnGenerarPDF, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -231,8 +223,8 @@ public class Filtros extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnCorreo)
-                    .addComponent(jButton1))
+                    .addComponent(btnEnviarCorreo)
+                    .addComponent(btnGenerarPDF))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
@@ -241,12 +233,10 @@ public class Filtros extends javax.swing.JFrame {
 
     private void llenarTabla(String consul){    
         String tabla = "pokemon ";
-        
         try {
             resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta(tabla, consul);
             String []info=new String[7];
             while (resultadoConsulta.next()){
-                //contador=Integer.valueOf(resultadoConsulta.getString(1))-1;
                 info[0]=resultadoConsulta.getString(1);
                 info[1]=resultadoConsulta.getString(2);
                 info[2]=resultadoConsulta.getString(5);
@@ -255,12 +245,9 @@ public class Filtros extends javax.swing.JFrame {
                 info[5]=resultadoConsulta.getString(12);
                 info[6]=resultadoConsulta.getString(17);
                 modelo.addRow(info);
-            } /*else {
-                nombrePokemon.setText("Este chucho no esta en el pokedex");
-            }*/
+            } 
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
-            System.out.println("Clavo con sql");
         }
     }
     
@@ -269,105 +256,57 @@ public class Filtros extends javax.swing.JFrame {
             while (modelo.getRowCount() > 0) {
                 modelo.removeRow(0);
             }
-            llenarTabla("where " + columna + " = '" + filtro + "'");
+            llenarTabla("WHERE " + columna + " = '" + filtro + "'");
         }
     }
     
-    private void btnCorreoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCorreoActionPerformed
+    private void btnEnviarCorreoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarCorreoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnCorreoActionPerformed
+    }//GEN-LAST:event_btnEnviarCorreoActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnGenerarPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarPDFActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnGenerarPDFActionPerformed
 
     private void cboFiltroColoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboFiltroColoresActionPerformed
-        // TODO add your handling code here:
-      //para eliminar todas las filas de la tabla
         String filtro = cboFiltroColores.getSelectedItem().toString();
         filtrarDatos(filtro, "color");
         cboFiltroColores.setSelectedIndex(0);
     }//GEN-LAST:event_cboFiltroColoresActionPerformed
 
     private void btnFiltroCapturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltroCapturaActionPerformed
-        // TODO add your handling code here:
         String filtro = txtRateCaptura.getText();
         filtrarDatos(filtro, "capture_rate");
         txtRateCaptura.setText("");
     }//GEN-LAST:event_btnFiltroCapturaActionPerformed
 
     private void cboFiltroHabitatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboFiltroHabitatActionPerformed
-        // TODO add your handling code here:
         String filtro = cboFiltroHabitat.getSelectedItem().toString();
         filtrarDatos(filtro, "habitat");
         cboFiltroHabitat.setSelectedIndex(0);
     }//GEN-LAST:event_cboFiltroHabitatActionPerformed
-
-    
+  
     private void btnFiltroExperienciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltroExperienciaActionPerformed
-        // TODO add your handling code here:
         String filtro = txtExperienciaBase.getText();
         filtrarDatos(filtro, "base_experience");
         txtExperienciaBase.setText("");
     }//GEN-LAST:event_btnFiltroExperienciaActionPerformed
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-        // TODO add your handling code here:
         VentanaPokedex ventanaPoke = new VentanaPokedex();
         ventanaPoke.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnRegresarActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Filtros.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Filtros.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Filtros.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Filtros.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Filtros().setVisible(true);
-            }
-        });
-
-    }
-
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable TablaMostrar;
-    private javax.swing.JButton btnCorreo;
+    private javax.swing.JButton btnEnviarCorreo;
     private javax.swing.JButton btnFiltroCaptura;
     private javax.swing.JButton btnFiltroExperiencia;
+    private javax.swing.JButton btnGenerarPDF;
     private javax.swing.JButton btnRegresar;
     private javax.swing.JComboBox<String> cboFiltroColores;
     private javax.swing.JComboBox<String> cboFiltroHabitat;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

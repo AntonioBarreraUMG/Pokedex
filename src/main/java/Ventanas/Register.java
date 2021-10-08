@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ventanas;
+package Ventanas;
 
-import Modelo.Usuario;
+import Modelo.MdUsuario;
 import Modelo.UsuarioJDBC;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -15,7 +15,8 @@ import javax.swing.JOptionPane;
  * @author jeant
  */
 public class Register extends javax.swing.JFrame {
-JFrame jFrame = new JFrame();
+    private final JFrame jFrame = new JFrame();
+    
     /**
      * Creates new form Login
      */
@@ -146,21 +147,21 @@ JFrame jFrame = new JFrame();
     }
     
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-        Usuario usu=new Usuario();
-        UsuarioJDBC udb=new UsuarioJDBC();
+        MdUsuario usu = new MdUsuario();
+        UsuarioJDBC udb = new UsuarioJDBC();
         
-        String usr= txtUsuarioR.getText();
-        String pwd=pwdContraR.getText();
-        String pwdConfirma=pwdConfirmaContra.getText();
-        String correo=txtCorreo.getText();
+        String usr = txtUsuarioR.getText();
+        String pwd = pwdContraR.getText();
+        String pwdConfirma = pwdConfirmaContra.getText();
+        String correo = txtCorreo.getText();
         if (pwd.equals(pwdConfirma)){
-            String contra=pwd;
+            String contra = pwd;
             usu.setUsername(usr);
             usu.setCorreo(correo);
             usu.setPassword(contra);
             udb.insert(usu);
             abrirVentanaLogin();
-        }else if(pwd!=pwdConfirma){
+        } else {
             JOptionPane.showMessageDialog(jFrame, "Error, revise que las contraseñas sean las mismas");
         }
     }//GEN-LAST:event_btnRegistrarActionPerformed
@@ -168,50 +169,6 @@ JFrame jFrame = new JFrame();
     private void regresarLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regresarLoginActionPerformed
         abrirVentanaLogin();
     }//GEN-LAST:event_regresarLoginActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    /*
-    public static void main(String args[]) {
-        
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        /*
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Register.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Register.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Register.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Register.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        /*
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Register().setVisible(true);
-            }
-        });
-        
-    }
-*/
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRegistrar;

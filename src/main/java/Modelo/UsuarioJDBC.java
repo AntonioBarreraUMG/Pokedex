@@ -18,7 +18,7 @@ public class UsuarioJDBC {
     private static final String SQL_SELECT = "SELECT * FROM usuario";
     private static final String SQL_INSERT = "INSERT INTO usuario(username, correo, password) VALUES(?,?,?)";//se usan los signos ? como parametros
 
-    public boolean select_validacion(Usuario datos) {
+    public boolean select_validacion(MdUsuario datos) {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -37,7 +37,7 @@ public class UsuarioJDBC {
         return permiso;
     }
         
-    public int insert(Usuario usuario){
+    public int insert(MdUsuario usuario){
         Connection conn = null;
         PreparedStatement stmt = null;
         int rows = 0;

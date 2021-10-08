@@ -20,25 +20,17 @@ public class ClsConexion {
         return DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PWD);
     }
     
-    public static void close(ResultSet rs) {
+    public static void close(Connection conn) {
         try {
-            rs.close();
+            conn.close();
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
         }
     }
     
-    public static void close(Statement st) {
+    public static void close(PreparedStatement stmt) {
         try {
-            st.close();
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
-        }
-    }
-    
-    public static void close(Connection cn) {
-        try {
-            cn.close();
+            stmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
         }

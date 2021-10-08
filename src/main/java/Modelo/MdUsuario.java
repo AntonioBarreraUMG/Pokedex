@@ -9,7 +9,7 @@ package Modelo;
  *
  * @author linda
  */
-public class Usuario {
+public class MdUsuario {
     private String username;
     private String correo;
     private String password;
