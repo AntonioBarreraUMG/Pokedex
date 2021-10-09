@@ -6,12 +6,38 @@
 package Ventanas;
 
 import Modelo.AccesoDatosJDBC;
+import Modelo.ClsConexion;
+import Modelo.UsuarioJDBC;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
 
 /**
  *
@@ -27,6 +53,9 @@ public class Filtros extends javax.swing.JFrame {
     private final Image imagen1 = null;
     private int contador = 0;
     private ResultSet resultadoConsulta;
+    private String columna = "";
+    private String valor = "";
+    private String USER = "Jesús";
     
     public Filtros() {
         initComponents();     
@@ -231,19 +260,23 @@ public class Filtros extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void setUSER(String usuario) {
+        this.USER = usuario;
+    }
+    
     private void llenarTabla(String consul){    
         String tabla = "pokemon ";
         try {
             resultadoConsulta = AccesoDatosJDBC.ejecutarConsulta(tabla, consul);
-            String []info=new String[7];
+            String []info = new String[7];
             while (resultadoConsulta.next()){
-                info[0]=resultadoConsulta.getString(1);
-                info[1]=resultadoConsulta.getString(2);
-                info[2]=resultadoConsulta.getString(5);
-                info[3]=resultadoConsulta.getString(10);
-                info[4]=resultadoConsulta.getString(11);
-                info[5]=resultadoConsulta.getString(12);
-                info[6]=resultadoConsulta.getString(17);
+                info[0] = resultadoConsulta.getString(1);
+                info[1] = resultadoConsulta.getString(2);
+                info[2] = resultadoConsulta.getString(5);
+                info[3] = resultadoConsulta.getString(10);
+                info[4] = resultadoConsulta.getString(11);
+                info[5] = resultadoConsulta.getString(12);
+                info[6] = resultadoConsulta.getString(17);
                 modelo.addRow(info);
             } 
         } catch (SQLException ex) {
@@ -251,49 +284,135 @@ public class Filtros extends javax.swing.JFrame {
         }
     }
     
-    private void filtrarDatos(String filtro, String columna) {
-        if (!Objects.equals(filtro, "Seleccionar opción")) {
+    private void filtrarDatos(String columna, String valor) {
+        if (!Objects.equals(valor, "Seleccionar opción")) {
             while (modelo.getRowCount() > 0) {
                 modelo.removeRow(0);
             }
-            llenarTabla("WHERE " + columna + " = '" + filtro + "'");
+            llenarTabla("WHERE " + columna + " = '" + valor + "'");
         }
     }
     
+    private void generarPDF(String columna, String valor){
+        JasperReport jasperReport;
+        JasperPrint jasperPrint; 
+        Map parametros = null;
+        try
+        {
+            if (!Objects.equals(columna, "") && !Objects.equals(valor, "")) {
+                parametros = new HashMap();
+                parametros.put("columna", columna);
+                parametros.put("valor", valor);
+            }
+            String path = "C:\\Users\\jeant\\Documents\\NetBeansProjects\\Pokedex\\src\\main\\java\\Reportes\\ReportePokemon.jasper";
+            jasperReport = (JasperReport) JRLoader.loadObjectFromFile(path);
+            jasperPrint = JasperFillManager.fillReport(jasperReport, parametros, ClsConexion.getConnection());
+            JasperExportManager.exportReportToPdfFile( jasperPrint, "C:\\Users\\jeant\\Downloads\\ReportePokemon" + (columna.substring(0,1).toUpperCase() + columna.substring(1).toLowerCase()) + ".pdf");
+        }
+        catch (JRException ex) {
+          System.err.println( "Error iReport: " + ex.getMessage());
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.out);
+        }
+    }
+    
+    private void enviarCorreo(String destinatario, String path) {
+        try {
+            Properties props = new Properties();
+            props.setProperty("mail.smtp.host", "smtp.gmail.com");
+            props.setProperty("mail.smtp.starttls.enable", "true");
+            props.setProperty("mail.smtp.port", "587");
+            props.setProperty("mail.smtp.auth", "true");
+            
+            Session session = Session.getDefaultInstance(props);
+            
+            String correoRemitente = "proyectofinalpokedex@gmail.com";
+            String passwordRemitente = "Poke1234";
+            String correoReceptor = destinatario;
+            
+            String asunto = "Reporte Pokemon";
+            
+            BodyPart adjunto = new MimeBodyPart();
+            adjunto.setDataHandler(new DataHandler(new FileDataSource(path)));
+            adjunto.setFileName("Reporte.pdf");
+            
+            MimeMultipart multiparte = new MimeMultipart();
+            multiparte.addBodyPart(adjunto);
+            
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(correoRemitente));
+
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(correoReceptor));
+            message.setSubject(asunto);
+            message.setContent(multiparte);
+            
+            Transport t = session.getTransport("smtp");
+            t.connect(correoRemitente,passwordRemitente);
+            t.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
+            t.close();
+        } catch (AddressException ex) {
+            ex.printStackTrace(System.out);
+        } catch (MessagingException ex) {
+            ex.printStackTrace(System.out);
+        }                                         
+    }
+      
     private void btnEnviarCorreoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarCorreoActionPerformed
-        // TODO add your handling code here:
+        try {
+            generarPDF(columna, valor);
+            String destinatario = UsuarioJDBC.selectCorreo(USER);
+            String tipoFiltro = columna.substring(0,1).toUpperCase() + columna.substring(1).toLowerCase();
+            String path = "C:\\Users\\jeant\\Downloads\\ReportePokemon" + tipoFiltro + ".pdf";
+            enviarCorreo(destinatario, path);
+            File reporte = new File(path);
+            reporte.delete();
+            JOptionPane.showMessageDialog(null,"Correo Electrónico enviado con exito.");
+        } catch (HeadlessException ex) {
+            JOptionPane.showMessageDialog(null, "Ha ocurrido un error.");
+        }
     }//GEN-LAST:event_btnEnviarCorreoActionPerformed
 
     private void btnGenerarPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarPDFActionPerformed
-        // TODO add your handling code here:
+        try {
+            generarPDF(columna, valor);
+            JOptionPane.showMessageDialog(null, "Tu reporte ha sido guardado en la carpeta de descargas.");
+        } catch (HeadlessException ex) {
+            JOptionPane.showMessageDialog(null, "Ha ocurrido un error.");
+        }
+        
     }//GEN-LAST:event_btnGenerarPDFActionPerformed
 
     private void cboFiltroColoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboFiltroColoresActionPerformed
-        String filtro = cboFiltroColores.getSelectedItem().toString();
-        filtrarDatos(filtro, "color");
+        columna = "color";
+        valor = cboFiltroColores.getSelectedItem().toString();
+        filtrarDatos(columna, valor);
         cboFiltroColores.setSelectedIndex(0);
     }//GEN-LAST:event_cboFiltroColoresActionPerformed
 
     private void btnFiltroCapturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltroCapturaActionPerformed
-        String filtro = txtRateCaptura.getText();
-        filtrarDatos(filtro, "capture_rate");
+        columna = "capture_rate";
+        valor = txtRateCaptura.getText();
+        filtrarDatos(columna, valor);
         txtRateCaptura.setText("");
     }//GEN-LAST:event_btnFiltroCapturaActionPerformed
 
     private void cboFiltroHabitatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboFiltroHabitatActionPerformed
-        String filtro = cboFiltroHabitat.getSelectedItem().toString();
-        filtrarDatos(filtro, "habitat");
+        columna = "habitat";
+        valor = cboFiltroHabitat.getSelectedItem().toString();
+        filtrarDatos(columna, valor);
         cboFiltroHabitat.setSelectedIndex(0);
     }//GEN-LAST:event_cboFiltroHabitatActionPerformed
   
     private void btnFiltroExperienciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltroExperienciaActionPerformed
-        String filtro = txtExperienciaBase.getText();
-        filtrarDatos(filtro, "base_experience");
+        columna = "base_experience";
+        valor = txtExperienciaBase.getText();
+        filtrarDatos(columna, valor);
         txtExperienciaBase.setText("");
     }//GEN-LAST:event_btnFiltroExperienciaActionPerformed
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
         VentanaPokedex ventanaPoke = new VentanaPokedex();
+        ventanaPoke.setUSER(USER);
         ventanaPoke.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnRegresarActionPerformed

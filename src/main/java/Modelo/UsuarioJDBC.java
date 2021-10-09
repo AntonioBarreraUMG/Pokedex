@@ -15,9 +15,26 @@ import java.sql.SQLException;
  * @author linda
  */
 public class UsuarioJDBC {
-    private static final String SQL_SELECT = "SELECT * FROM usuario";
-    private static final String SQL_INSERT = "INSERT INTO usuario(username, correo, password) VALUES(?,?,?)";//se usan los signos ? como parametros
+    private static final String SQL_SELECT = "SELECT * FROM test.usuario ";
+    private static final String SQL_INSERT = "INSERT INTO usuario(username, correo, password) VALUES(?,?,?)";
 
+    public static String selectCorreo(String USER) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        String correo = null;
+        try {
+            conn = ClsConexion.getConnection();
+            stmt = conn.prepareStatement(SQL_SELECT + "WHERE username = '" + USER + "'");
+            rs = stmt.executeQuery();
+            rs.next();
+            correo = rs.getString(4);
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.out);
+        }
+        return correo;
+    }
+    
     public boolean select_validacion(MdUsuario datos) {
         Connection conn = null;
         PreparedStatement stmt = null;

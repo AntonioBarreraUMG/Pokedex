@@ -648,6 +648,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
 
     private void btnFiltrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltrosActionPerformed
         Filtros ventanaFiltros = new Filtros();
+        ventanaFiltros.setUSER(USER);
         ventanaFiltros.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnFiltrosActionPerformed
