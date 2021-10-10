@@ -50,10 +50,6 @@ public class Register extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Perpetua Titling MT", 1, 18)); // NOI18N
         jLabel1.setText("Registrarse");
 
-        txtUsuarioR.setText("jTextField1");
-
-        txtCorreo.setText("jTextField2");
-
         jLabel2.setText("Nombre del usuario:");
 
         jLabel3.setText("Correo electrónico:");
@@ -75,10 +71,6 @@ public class Register extends javax.swing.JFrame {
                 regresarLoginActionPerformed(evt);
             }
         });
-
-        pwdContraR.setText("jPasswordField1");
-
-        pwdConfirmaContra.setText("jPasswordField2");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

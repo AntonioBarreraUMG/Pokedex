@@ -298,12 +298,10 @@ public class VentanaPokedex extends javax.swing.JFrame {
 
         nombrePokemon.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         nombrePokemon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        nombrePokemon.setText("jLabel1");
+        nombrePokemon.setText("- - - - - -");
         nombrePokemon.setToolTipText("");
 
         jLabel1.setText("Nombre:");
-
-        txtBuscarNombre.setText("jTextField1");
 
         btnBuscarNombre.setText("Buscar");
         btnBuscarNombre.addActionListener(new java.awt.event.ActionListener() {
@@ -375,35 +373,35 @@ public class VentanaPokedex extends javax.swing.JFrame {
         jLabel8.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel8.setText("Habitat:");
 
-        lblAltura.setText("jLabel5");
+        lblAltura.setText("- - - - - -");
 
-        lblPeso.setText("jLabel9");
+        lblPeso.setText("- - - - - -");
 
-        lblEspecie.setText("jLabel10");
+        lblEspecie.setText("- - - - - -");
 
-        lblColor.setText("jLabel11");
+        lblColor.setText("- - - - - -");
 
-        lblHabitat.setText("jLabel12");
+        lblHabitat.setText("- - - - - -");
 
         jLabel9.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel9.setText("Generación:");
 
-        lblGeneracion.setText("jLabel13");
+        lblGeneracion.setText("- - - - - -");
 
         jLabel10.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel10.setText("Captura:");
 
-        lblCaptura.setText("jLabel14");
+        lblCaptura.setText("- - - - - -");
 
         jLabel11.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel11.setText("Experiencia:");
 
-        lblFelicidad.setText("jLabel16");
+        lblFelicidad.setText("- - - - - -");
 
         jLabel12.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel12.setText("Felicidad:");
 
-        lblExperiencia.setText("jLabel15");
+        lblExperiencia.setText("- - - - - -");
 
         btnLogout.setText("Cerrar Sesión");
         btnLogout.addActionListener(new java.awt.event.ActionListener() {
@@ -419,7 +417,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
             }
         });
 
-        lblIdReal.setText("jLabel13");
+        lblIdReal.setText("- - - - - -");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

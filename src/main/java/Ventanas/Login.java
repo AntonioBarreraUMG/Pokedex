@@ -48,8 +48,6 @@ public class Login extends javax.swing.JFrame {
 
         jLabel2.setText("Ingrese su usuario:");
 
-        txtUsuarioI.setText("Jesús");
-
         jLabel3.setText("Ingrese su contraseña:");
 
         btnIngresar.setText("Ingresar");
@@ -58,8 +56,6 @@ public class Login extends javax.swing.JFrame {
                 btnIngresarActionPerformed(evt);
             }
         });
-
-        pwdContraI.setText("12345");
 
         btnRegistrar.setText("Registrarme");
         btnRegistrar.addActionListener(new java.awt.event.ActionListener() {

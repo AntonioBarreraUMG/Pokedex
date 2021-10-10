@@ -55,7 +55,7 @@ public class Filtros extends javax.swing.JFrame {
     private ResultSet resultadoConsulta;
     private String columna = "";
     private String valor = "";
-    private String USER = "Jesús";
+    private String USER = "";
     
     public Filtros() {
         initComponents();     
